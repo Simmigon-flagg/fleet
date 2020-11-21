@@ -1,0 +1,29 @@
+{
+  "name": "fleet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Simmigon-flagg/fleet.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Simmigon-flagg/fleet/issues"
+  },
+  "homepage": "https://github.com/Simmigon-flagg/fleet#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.20",
+    "uuid": "^8.3.1"
+  }
+}
