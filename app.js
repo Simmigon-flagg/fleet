@@ -1,6 +1,6 @@
 const express = require("express");
-const { v4: uuidv4 } = require('uuid');
-var _ = require('lodash');
+const { v4: uuidv4 } = require("uuid");
+var _ = require("lodash");
 const app = express();
 
 const fleet = [
@@ -88,21 +88,24 @@ app.get("/", (request, response) => {
   return response.json({ message: "Welcome to GM Fleets" });
 });
 
-
 app.get("/fleet", (request, response) => {
   return response.json({ fleet });
 });
 
 app.get("/car/:id", (request, response) => {
-  const id = request.params.id
-  _.find(fleet , function (fleet) {
-    if(fleet.carId === id){
-      return response.status(200).json({ fleet });
+  const id = request.params.id;
+  let car = {};
+  _.find(fleet, function (fleet) {
+    if (fleet.carId === id) {
+      car = fleet;
     }
-  })
-  
-  return response.status(404).json({ message: "Not Found" });
-  
+  });
+
+  if (!_.isEmpty(car)) {
+    return response.status(200).json({ car });
+  } else {
+    return response.status(404).json({message:"Not Found"});
+  }
 });
 
 app.listen(PORT, () => {
