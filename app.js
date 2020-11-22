@@ -1,6 +1,8 @@
+require('dotenv').config()
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 
 const app = express();
@@ -101,6 +103,7 @@ app.post("/users", async (request, response) => {
     const hashedPassword = await bcrypt.hash(request.body.password, 10);
 
     const user = {
+      id: uuidv4(),
       name: request.body.name,
       password: hashedPassword,
       isAdmin: request.body.isAdmin,
@@ -116,24 +119,37 @@ app.post("/users", async (request, response) => {
 app.post("/users/login", async (request, response) => {
   //Search for user by ID
   //This line is not returning the users name
-  const user = users.find((user) => (user.name = request.body.name));
-  console.log(user);
-  if (user != null) {
+  const foundUser = users.find((user) => user.name == request.body.name);
+
+  
+  if (foundUser != null) {
+    console.log(`Found: ${foundUser}`);
     try {
-      if (await bcrypt.compare(request.body.password, user.password)) {
-        response.status(200).json({ user: user.name });
-      }else{
-        response.status(401).json({ message: "Invalid Username/Password" });
-        
+      if (await bcrypt.compare(request.body.password, foundUser.password)) {
+        const { id, name, isAdmin } = foundUser;
+        const user = {
+          id, 
+          name,
+          isAdmin
+        }
+       
+        const accessToken = jwt.sign(user, process.env.TOKEN_SECRET)
+
+        return response.status(200).json( { accessToken });
+      } else {
+        return response.status(401).json({ message: "Invalid Username/Password" });
       }
     } catch {
-      response.status(500).json({ message: "Invalid Username/Password" });
-
+      return response.status(500).json({ message: "Server Error" });
     }
+  } else {
+    console.log(`This is is not found: ${foundUser}`);
+    
   }
 });
 
-app.get("/fleet", (request, response) => {
+app.get("/fleet", checkAuthToken, (request, response) => {
+  
   return response.json(fleet);
 });
 
@@ -153,6 +169,26 @@ app.get("/car/:id", (request, response) => {
   }
 });
 
+
+function checkAuthToken(request, response, next){
+  console.log();
+  const authHeader = request.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1];
+  if(token != null){
+    jwt.verify(token, process.env.TOKEN_SECRET, (error, user)=> {
+      if(!error){
+        request.user = user;
+        next()
+        
+      }else{
+        
+        return response.status(403)
+      }
+    })
+  }else{
+    return response.status(401)
+  }
+}
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
