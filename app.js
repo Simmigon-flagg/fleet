@@ -8,7 +8,7 @@ const _ = require("lodash");
 const app = express();
 app.use(express.json());
 
-const users = [];
+// Set up remote database
 const fleet = [
   {
     carId: uuidv4(),
@@ -90,63 +90,6 @@ const fleet = [
 ];
 
 const PORT = 5000;
-app.get("/", (request, response) => {
-  return response.json({ message: "Welcome to GM Fleets" });
-});
-
-app.get("/users", (request, response) => {
-  return response.json(users);
-});
-
-app.post("/users", async (request, response) => {
-  try {
-    const hashedPassword = await bcrypt.hash(request.body.password, 10);
-
-    const user = {
-      id: uuidv4(),
-      name: request.body.name,
-      password: hashedPassword,
-      isAdmin: request.body.isAdmin,
-    };
-
-    users.push(user);
-    return response.sendStatus(201);
-  } catch {
-    return response.sendStatus(500);
-  }
-});
-
-app.post("/users/login", async (request, response) => {
-  //Search for user by ID
-  //This line is not returning the users name
-  const foundUser = users.find((user) => user.name == request.body.name);
-
-  
-  if (foundUser != null) {
-    console.log(`Found: ${foundUser}`);
-    try {
-      if (await bcrypt.compare(request.body.password, foundUser.password)) {
-        const { id, name, isAdmin } = foundUser;
-        const user = {
-          id, 
-          name,
-          isAdmin
-        }
-       
-        const accessToken = jwt.sign(user, process.env.TOKEN_SECRET)
-
-        return response.status(200).json( { accessToken });
-      } else {
-        return response.status(401).json({ message: "Invalid Username/Password" });
-      }
-    } catch {
-      return response.status(500).json({ message: "Server Error" });
-    }
-  } else {
-    console.log(`This is is not found: ${foundUser}`);
-    
-  }
-});
 
 app.get("/fleet", checkAuthToken, (request, response) => {
   
@@ -171,24 +114,20 @@ app.get("/car/:id", (request, response) => {
 
 
 function checkAuthToken(request, response, next){
-  console.log();
+
   const authHeader = request.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1];
-  if(token != null){
+
+  if(token == null) return response.status(401).send()
+
     jwt.verify(token, process.env.TOKEN_SECRET, (error, user)=> {
-      if(!error){
+    
+      if(error) return response.status(403).send()
         request.user = user;
         next()
-        
-      }else{
-        
-        return response.status(403)
-      }
     })
-  }else{
-    return response.status(401)
   }
-}
+
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
