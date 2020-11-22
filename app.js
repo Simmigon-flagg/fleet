@@ -1,8 +1,12 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
-var _ = require("lodash");
-const app = express();
+const bcrypt = require("bcrypt");
+const _ = require("lodash");
 
+const app = express();
+app.use(express.json());
+
+const users = [];
 const fleet = [
   {
     carId: uuidv4(),
@@ -88,8 +92,49 @@ app.get("/", (request, response) => {
   return response.json({ message: "Welcome to GM Fleets" });
 });
 
+app.get("/users", (request, response) => {
+  return response.json(users);
+});
+
+app.post("/users", async (request, response) => {
+  try {
+    const hashedPassword = await bcrypt.hash(request.body.password, 10);
+
+    const user = {
+      name: request.body.name,
+      password: hashedPassword,
+      isAdmin: request.body.isAdmin,
+    };
+
+    users.push(user);
+    return response.sendStatus(201);
+  } catch {
+    return response.sendStatus(500);
+  }
+});
+
+app.post("/users/login", async (request, response) => {
+  //Search for user by ID
+  //This line is not returning the users name
+  const user = users.find((user) => (user.name = request.body.name));
+  console.log(user);
+  if (user != null) {
+    try {
+      if (await bcrypt.compare(request.body.password, user.password)) {
+        response.status(200).json({ user: user.name });
+      }else{
+        response.status(401).json({ message: "Invalid Username/Password" });
+        
+      }
+    } catch {
+      response.status(500).json({ message: "Invalid Username/Password" });
+
+    }
+  }
+});
+
 app.get("/fleet", (request, response) => {
-  return response.json({ fleet });
+  return response.json(fleet);
 });
 
 app.get("/car/:id", (request, response) => {
@@ -104,7 +149,7 @@ app.get("/car/:id", (request, response) => {
   if (!_.isEmpty(car)) {
     return response.status(200).json({ car });
   } else {
-    return response.status(404).json({message:"Not Found"});
+    return response.status(404).json({ message: "Not Found" });
   }
 });
 
