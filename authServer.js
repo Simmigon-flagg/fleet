@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 
+
 const app = express();
 app.use(express.json());
 
@@ -16,19 +17,15 @@ let refreshTokens = [];
 
 
 const PORT = 4000;
-app.get("/", (request, response) => {
+app.get("/api/v1", (request, response) => {
   return response.json({ message: "Welcome to GM Fleets" });
 });
 
-app.get("/users", (request, response) => {
+app.get("/api/v1/user/all", (request, response) => {
   return response.json(users);
 });
 
-app.get("/refreshTokens", (request, response) => {
-  return response.json(refreshTokens);
-});
-
-app.post("/users", async (request, response) => {
+app.post("/api/v1/user", async (request, response) => {
   try {
     const hashedPassword = await bcrypt.hash(request.body.password, 10);
 
@@ -46,14 +43,12 @@ app.post("/users", async (request, response) => {
   }
 });
 
-app.post("/users/login", async (request, response) => {
+
+app.post("/api/v1/user/login", async (request, response) => {
   //Search for user by ID
   //This line is not returning the users name
   const foundUser = users.find((user) => user.name == request.body.name);
-
-  
   if (foundUser != null) {
-    console.log(`Found: ${foundUser}`);
     try {
       if (await bcrypt.compare(request.body.password, foundUser.password)) {
         const { id, name, isAdmin } = foundUser;
@@ -68,7 +63,8 @@ app.post("/users/login", async (request, response) => {
         // Add to redis database
         refreshTokens.push(refreshToken);
 
-        return response.status(200).json( { accessToken, refreshToken});
+        return response.status(200).json( { accessToken, refreshToken , id, name,
+          isAdmin} );
       } else {
         return response.status(401).json({ message: "Invalid Username/Password" });
       }
@@ -80,7 +76,7 @@ app.post("/users/login", async (request, response) => {
   }
 });
 
-app.delete('/users/logout', (request, response) => {
+app.delete('/api/v1/user/logout', (request, response) => {
   // Search the database for refresh-token then delete that token.
   const index = refreshTokens.indexOf(request.body.refreshToken)
   if(-1 < index){
@@ -89,7 +85,11 @@ app.delete('/users/logout', (request, response) => {
   }
 
 })
-app.post('/refresh-token',(request, response) => {
+
+app.get("/api/v1/user/refreshTokens", (request, response) => {
+  return response.json(refreshTokens);
+});
+app.post('/api/v1/user/refresh-token',(request, response) => {
   const refreshToken = request.body.refreshToken;
   if(refreshToken == null) return response.send(401);
   // Search Database for token 
@@ -108,10 +108,10 @@ app.post('/refresh-token',(request, response) => {
     return response.json({ accessToken })
 
   })
-  console.log(refreshToken);
+
 })
 function createAccessToken(user){
-  return  jwt.sign(user, process.env.TOKEN_SECRET, {expiresIn: '50s'})
+  return  jwt.sign(user, process.env.TOKEN_SECRET, {expiresIn: '1d'})
   
 }
 

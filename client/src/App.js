@@ -5,6 +5,7 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import FleetPage from "./pages/FleetPage";
+
 import NotFound from "./pages/NotFoundPage";
 import { UserContext } from "./contexts/UserContext";
 
@@ -42,8 +43,8 @@ function App({ history }) {
         <div className="App">
           <Switch>
             <Route exact path="/" component={HomePage} />
-              {/* Move fleet back to under is Admin  */}
-              <Route path="/fleet" component={FleetPage} />
+    
+    
             {user && user.isAdmin === true ? (
               <>
                 <Route path="/fleet" component={FleetPage} />

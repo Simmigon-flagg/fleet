@@ -5,7 +5,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 
+const morgan = require('morgan')
 const app = express();
+app.use(morgan('tiny'));
 app.use(express.json());
 
 // Set up remote database
@@ -15,13 +17,6 @@ const fleet = [
     latitude: 33.753746,
     longitude: -84.38633,
     location: "Atlanta, GA",
-    charge: Math.floor(Math.random() * 101),
-  },
-  {
-    carId: uuidv4(),
-    latitude: 34.155834,
-    longitude: -119.202789,
-    location: "Port Hueneme",
     charge: Math.floor(Math.random() * 101),
   },
   {
@@ -91,13 +86,14 @@ const fleet = [
 
 const PORT = 5000;
 
-app.get("/fleet", checkAuthToken, (request, response) => {
+app.get("/api/v1/fleet", checkAuthToken, (request, response) => {
   
   return response.json(fleet);
 });
 
-app.get("/car/:id", (request, response) => {
+app.get("/api/v1/car/:id", (request, response) => {
   const id = request.params.id;
+  console.log(id);
   let car = {};
   _.find(fleet, function (fleet) {
     if (fleet.carId === id) {
@@ -106,7 +102,7 @@ app.get("/car/:id", (request, response) => {
   });
 
   if (!_.isEmpty(car)) {
-    return response.status(200).json({ car });
+    return response.status(200).json( car );
   } else {
     return response.status(404).json({ message: "Not Found" });
   }
