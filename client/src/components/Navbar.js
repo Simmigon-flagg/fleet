@@ -27,6 +27,22 @@ const Navbar = () => {
       </button>
       <div className="collapse navbar-collapse" id="navbarText">
         <ul className="navbar-nav mr-auto">
+        {/* remove the code in between */}
+        <>
+              <li className="nav-item active">
+                <Link
+                  className="nav-link"
+                  to="/fleet"
+                  onClick={async () => {
+               
+                  }}
+                >
+                  {" "}
+                  Test Fleet
+                </Link>
+              </li>{" "}
+            </>
+        {/* remove the code in between */}
           {user && user.isAdmin == true ? (
             <>
               <li className="nav-item active">

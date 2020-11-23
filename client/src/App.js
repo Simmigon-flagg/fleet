@@ -42,8 +42,9 @@ function App({ history }) {
         <div className="App">
           <Switch>
             <Route exact path="/" component={HomePage} />
-
-            {user && user.IsAdmin == true ? (
+              {/* Move fleet back to under is Admin  */}
+              <Route path="/fleet" component={FleetPage} />
+            {user && user.isAdmin === true ? (
               <>
                 <Route path="/fleet" component={FleetPage} />
               </>
