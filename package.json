@@ -5,10 +5,13 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cd client && npm run build",
+    "installs": "cd client && yarn install",
+    "heroku-postbuild": "npm run installs && npm run build",
     "auth": "nodemon authServer.js",
     "client": "cd client && yarn start",
-    "app": "nodemon app.js",
-    "start": "concurrently \"yarn client\" \"nodemon authServer.js\" nodemon app.js"
+    "start": "nodemon app.js",
+    "all": "concurrently \"yarn client\" \"nodemon authServer.js\" nodemon app.js"
   },
   "repository": {
     "type": "git",

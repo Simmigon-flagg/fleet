@@ -60,16 +60,17 @@ app.post("/api/v1/user", async (request, response) => {
 app.post("/api/v1/user/login", async (request, response) => {
   //Search for user by ID
   //This line is not returning the users name
-  const user = { name: request.body.name };
-  const foundUser = await Users.find(user);
+  const search = { name: request.body.name };
+  const foundUser = await Users.find(search);
+  let user = {};
   let accessToken ="";
   let refreshToken = "";
   if (foundUser.length > 0) {
+    const {id , name, isAdmin} = foundUser[0];
     try {
       if (await bcrypt.compare(request.body.password, foundUser[0].password)) {
-       
-
-        const user = {
+          
+         user = {
           id: foundUser[0]._id,
           name: foundUser[0].name,
           isAdmin: foundUser[0].isAdmin,
@@ -108,15 +109,15 @@ app.post("/api/v1/user/login", async (request, response) => {
         
 
         
-        
-        return response.status(200).json({ accessToken, refreshToken, user });
+        console.log(name)
+        return response.status(200).json({ accessToken, refreshToken, name , id, isAdmin });
       } else {
         return response
         .status(401)
         .json({ message: "Invalid Username/Password" });
       }
     } catch {
-      return response.status(200).json({ accessToken, refreshToken, user });
+      return response.status(200).json({ accessToken, refreshToken,  name , id, isAdmin });
       
     }
   } else {
