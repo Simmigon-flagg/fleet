@@ -10,8 +10,8 @@
     "heroku-postbuild": "npm run installs && npm run build",
     "auth": "nodemon authServer.js",
     "client": "cd client && yarn start",
-    "start": "nodemon app.js",
-    "all": "concurrently \"yarn client\" \"nodemon authServer.js\" nodemon app.js"
+    "app": "nodemon app.js",
+    "start": "concurrently \"yarn client\" \"nodemon authServer.js\" nodemon app.js"
   },
   "repository": {
     "type": "git",

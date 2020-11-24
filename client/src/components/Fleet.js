@@ -13,6 +13,4 @@ const Fleet = ({ GM_fleet }) => {
     </>
   );
 };
-// MONGODB_URI
-// mongodb+srv://kaipherDev:owfz4FJMVS9oIehs@kaiphercluster-cb79m.mongodb.net/boxy_burgers?retryWrites=true&w=majority
 export default Fleet;

@@ -75,7 +75,6 @@ function checkAuthToken(request, response, next){
   }
 
   if(process.env.NODE_ENV === 'production'){
-   app.use(express.static('client/build')) 
   }
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
