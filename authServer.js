@@ -7,7 +7,7 @@ const _ = require("lodash");
 //Set up remote database
 require("./config/mongooseconnection");
 const Users = require("./models/Users");
-const { first } = require("lodash");
+
 
 const app = express();
 app.use(express.json());
