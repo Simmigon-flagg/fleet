@@ -14,14 +14,17 @@ const Fleet = require('./models/Fleets')
 const PORT = process.env.PORT || 5000;
 
 app.get("/api/v1/fleet", checkAuthToken, async (request, response) => {
-  const cars = await Fleet.find({})
-  console.log(cars)
-  return response.json(cars);
-});
+  
+  const checkcreds  = request.user.isAdmin;
+  if(checkcreds){
+    const cars = await Fleet.find({})
 
-app.get("/api/v1/fleet/data", (request, response) => {
+    return response.json(cars);
+  }else{
+    
+    return response.status(403);
+  }
 
-  return response.json(fleet);
 });
 
 app.post("/api/v1/fleet", (request, response) => {
@@ -70,7 +73,7 @@ function checkAuthToken(request, response, next){
     
       if(error) return response.status(403).send()
         request.user = user;
-        next()
+        next();
     })
   }
 
