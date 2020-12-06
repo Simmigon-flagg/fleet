@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import { UserContext } from "../contexts/UserContext";
-import { useForm } from "react-hook-form";
-import auth from "../services/auth";
 import Fleet from "../components/Fleet";
 import Map from "../components/Map";
 

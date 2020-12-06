@@ -27,6 +27,7 @@ app.get("/api/v1/fleet", checkAuthToken, async (request, response) => {
 
 });
 
+
 app.post("/api/v1/fleet", (request, response) => {
   request.body.charge = Math.floor(Math.random() * 101).toString();
   const car = request.body;
@@ -34,11 +35,10 @@ app.post("/api/v1/fleet", (request, response) => {
   const newCar = new Fleet(car)
   newCar.save((error) =>{
     if(error){
-      console.log(error)
-      console.log("Not Saved")
+      return response.json({message: error});
+
     }else{
       
-      console.log("Saved")
     }
   })
   return response.json(newCar);
@@ -73,7 +73,7 @@ function checkAuthToken(request, response, next){
     
       if(error) return response.status(403).send()
         request.user = user;
-        next();
+        next()
     })
   }
 

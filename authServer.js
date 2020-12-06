@@ -18,7 +18,7 @@ let refreshTokens = [];
 const PORT = process.env.PORT || 4000;
 app.get("/api/v1", async (request, response) => {
   const users = await Users.find({});
-  console.log(users);
+  
   return response.json({ message: "Welcome to GM Fleets" });
 });
 
@@ -105,11 +105,7 @@ app.post("/api/v1/user/login", async (request, response) => {
        if(!found){
         refreshTokens.push(temp)
        }
-        console.log("=====================================")
-        
 
-        
-        console.log(name)
         return response.status(200).json({ accessToken, refreshToken, name , id, isAdmin });
       } else {
         return response

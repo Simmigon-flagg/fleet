@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import auth from "../services/auth";
 
 const HomePage = () => {
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit } = useForm();
   const { user, setUser } = useContext(UserContext);
 
   const onSubmit = async (data) => {

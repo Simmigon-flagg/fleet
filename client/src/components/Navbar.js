@@ -28,14 +28,14 @@ const Navbar = () => {
       <div className="collapse navbar-collapse" id="navbarText">
         <ul className="navbar-nav mr-auto">
   
-          {user && user.isAdmin == true ? (
+          {user && user.isAdmin === true ? (
             <>
               <li className="nav-item active">
                 <Link
                   className="nav-link"
                   to="/fleet"
-                  onClick={async () => {
-               
+                  onClick={async (data) => {
+                    console.log(data);
                   }}
                 >
                   {" "}
