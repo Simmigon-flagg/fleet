@@ -22,9 +22,6 @@ app.get("/api/v1", async (request, response) => {
   return response.json({ message: "Welcome to GM Fleets" });
 });
 
-app.get("/api/v1/user/all", (request, response) => {
-  return response.json(users);
-});
 
 app.post("/api/v1/user", async (request, response) => {
   const searchByUserName = { name: request.body.name };
